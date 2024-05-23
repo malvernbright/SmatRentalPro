@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StorePropertyRequest;
 use App\Http\Requests\UpdatePropertyRequest;
 use App\Models\Property;
+use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Validator;
 
 class PropertyController extends Controller
@@ -38,6 +39,11 @@ class PropertyController extends Controller
                 $request->all(),
                 [
                     'title' => 'required',
+                    'description' => 'required',
+                    'size' => 'required',
+                    'property_image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+                    'price' => 'required',
+                    'tenure' => 'required',
                 ]
             );
 
@@ -49,11 +55,25 @@ class PropertyController extends Controller
                 ], 400);
             }
 
-            $property = new Property();
-            $property->title = $request->title;
-            $property->description = $request->input('description');
+            $property = new Property;
+            $property->title = $request->input('title');
+            $property->description = $request->input('description');;
             $property->size = $request->input('size');
-            $property->property_image = $request->file('property_image')->store('public/images');
+            $property->price = $request->input('price');
+            $property->tenure = $request->input('tenure');
+
+            if(!$request->hasFile('property_image')) {
+                return response()->json(['upload_file_not_found'], 400);
+            }
+            $file = $request->file('property_image');
+            if(!$file->isValid()) {
+                return response()->json(['invalid_file_upload'], 400);
+            }
+            $path = public_path() . '/uploads/images/store/';
+            $file->move($path, $file->getClientOriginalName());
+
+
+            $property->property_image = $file->getClientOriginalName();
             $property->owner_id = auth()->user()->id;
             $property->save();
             // return redirect()->route('properties.index');
@@ -73,18 +93,44 @@ class PropertyController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Property $property)
+    public function show($id)
     {
-        return view('properties.show', compact('property'));
+        return Property::findOrFail($id);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Property $property)
+    public function edit(Request $request, $id)
     {
-        // if($property->owner_id === auth()->user()->id)
-        return view('properties.edit', compact('property'));
+        
+
+        try {
+
+            $property = Property::firstWhere('id', $id);
+            $property->title = $request->input('title');
+            $property->description = $request->input('description');;
+            $property->size = $request->input('size');
+            $property->price = $request->input('price');
+            $property->tenure = $request->input('tenure');
+            $file = $request->file('property_image');
+            $path = public_path() . '/uploads/images/store/';
+            $file->move($path, $file->getClientOriginalName());
+            $property->property_image = $file->getClientOriginalName();
+            $property->owner_id = auth()->user()->id;
+            $property->save();
+            // return redirect()->route('properties.index');
+            return response()->json([
+                'status' => true,
+                'message' => 'Property Updated Successfully',
+                'data' => $property
+            ], 200);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => false,
+                'message' => $th->getMessage()
+            ], 500);
+        }
     }
 
     /**

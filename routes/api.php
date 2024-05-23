@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ApplicantController;
 use App\Http\Controllers\Auth\ApiAuthController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use Illuminate\Http\Request;
@@ -7,10 +8,11 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PropertyController;
 
-// Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
-//     return $request->user();
-// });
+Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
+    return $request->user();
+});
 
+// Auth routes
 Route::group([
     'middleware' => 'api',
     'prefix' => 'auth'
@@ -37,40 +39,28 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+
 // Properties routes
-/**
- * middleware(['auth', 'verified', 'role:admin'])->
- * Route::group([
- *  'middleware'=>'api',
- *  'prefix'=>'auth'
- *], function($router){
- *  Route::post('login', [AuthController::class, 'login']);
- *  Route::post('logout', [AuthController::class, 'logout']);
- *   Route::post('refresh', [AuthController::class, 'refresh']);
- *   Route::post('me', [AuthController::class, 'me']);
- *});
-
- *Route::group(['prefix' => 'auth'], function ($router) {
- *   Route::post('register', [AuthController::class, 'register']);
- *});
- */
-Route::group(['middleware' => ['auth:api']], function () {
-
-    Route::group(['prefix' => 'properties', 'middleware' => 'api'], function () {
-        Route::get('/', [PropertyController::class, 'index']);
-    });
-});
 Route::group(
-    [
-        'middleware' => 'api',
-        'prefix' => 'properties'
-    ],
+    ['middleware' => 'auth:api',],
     function () {
-
-        Route::middleware('role:admin')->group(function () {
+        Route::group(['prefix' => 'properties'], function () {
             Route::post('/', [PropertyController::class, 'store']);
+            Route::get('/', [PropertyController::class, 'index']);
+            Route::get('/{property}', [PropertyController::class,'show']);
             Route::patch('/{property}', [PropertyController::class, 'update']);
             Route::delete('/{property}', [PropertyController::class, 'destroy']);
         });
+
+        Route::group(['prefix' => 'applicants'], function () {
+            Route::post('/', [ApplicantController::class, 'store']);
+            Route::get('/', [ApplicantController::class, 'index']);
+            Route::get('/{applicant}', [ApplicantController::class,'show']);
+            Route::patch('/{applicant}', [PropertyController::class, 'update'])->middleware('role:user');
+            Route::delete('/{applicant}', [PropertyController::class, 'destroy'])->middleware('role:admin');
+        });
     }
 );
+/**
+ * ApplicantController
+ */
