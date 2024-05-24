@@ -1,7 +1,8 @@
 import { Card, Col, Container, Form, Row, Button } from "react-bootstrap";
 import { useLocation } from "react-router-dom";
-import { usePost } from "../../hooks/usePost";
+// import { usePost } from "../../hooks/usePost";
 import { PropertyApplicationSchema } from "../auth/schemas/PropertyApplicationSchema";
+// import { useState, useEffect } from "react";
 /**
  * 
  * @returns data
@@ -18,9 +19,10 @@ import { PropertyApplicationSchema } from "../auth/schemas/PropertyApplicationSc
 export const Property = () => {
   const location = useLocation();
   const property = location.state.property;
-  const url = "/api/auth/me";
-  const { data: profile } = usePost({ queryKey: "me", endpoint: url })
+  // const url = "/api/auth/me";
+  // const { data: profile } = usePost({ queryKey: "me", endpoint: url })
   const { postData, handleSubmit, errors, onSubmit } = PropertyApplicationSchema();
+
   return (
     <Container className="py-5 my-5" fluid={true}>
       <Row>
@@ -39,16 +41,17 @@ export const Property = () => {
             <Form.Text><h2>Apply for property</h2></Form.Text>
             <Form.Group>
               <Form.Label>Your name</Form.Label>
-              <Form.Control type="text" placeholder="Name..." value={profile?.name} readOnly={true} {...postData('name')} />
+              <Form.Control type="text" placeholder="Name..." {...postData('name')} />
+              <p className="text-muted error">{errors.name?.message}</p>
             </Form.Group>
             <Form.Group>
               <Form.Label>Your email</Form.Label>
-              <Form.Control type="email" placeholder="Email..." value={profile?.email} required={true} {...postData('email')} />
+              <Form.Control type="email" placeholder="Email..." {...postData('email')} />
               <p className="text-muted error">{errors.email?.message}</p>
             </Form.Group>
             <Form.Group>
               <Form.Label>Your phone</Form.Label>
-              <Form.Control type="text" placeholder="Phone..." required={true} {...postData('phone')} />
+              <Form.Control type="text" placeholder="Phone..." {...postData('phone')} />
               <p className="text-muted error">{errors.phone?.message}</p>
             </Form.Group>
             <Form.Group>
@@ -56,7 +59,7 @@ export const Property = () => {
               <Form.Control as="textarea" rows={3} value={`Hello I want to apply for ${property.title}`} {...postData('message')} />
               <p className="text-muted error">{errors.message?.message}</p>
             </Form.Group>
-            <input type="hidden" value={property.id} {...postData('property_id')}/>
+            <input type="hidden" value={property?.id} {...postData('property_id')} />
             <hr />
             <Form.Group>
               <Button variant="outline-primary primary" type="submit" size="lg">Submit</Button>

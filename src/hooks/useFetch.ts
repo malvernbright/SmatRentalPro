@@ -8,7 +8,7 @@ export const useFetch = (props: Props) => {
         queryKey: [props.queryKey],
         queryFn: async () => {
             try {
-                const response = await api.get(props.endpoint)
+                const response = await api.get(props.endpoint, props.payload)
                 console.log(response.data)
                 return response.data;
             } catch (err) {

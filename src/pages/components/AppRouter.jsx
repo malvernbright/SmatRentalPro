@@ -5,6 +5,7 @@ import { Login } from '../auth/Login'
 import { Register } from '../auth/Register'
 import { AppNav } from './Navbar'
 import { Property } from '../properties/Property'
+import { MyApplications } from '../applications/MyApplications'
 
 function Logout() {
     localStorage.clear()
@@ -25,6 +26,13 @@ export const AppRouter = () => {
                         <Property />
                     </ProtectedRoute>
                 } />
+                <Route path='/properties/my-applied-properties'
+                    element={
+                        <ProtectedRoute>
+                            <MyApplications />
+                        </ProtectedRoute>
+                    }
+                />
                 <Route path='/login' element={<Login />} />
                 <Route path='/register' element={<Register />} />
                 <Route path='/logout' element={<Logout />} />

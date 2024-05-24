@@ -13,7 +13,7 @@ export const AppNav = () => {
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="me-auto">
                         <Nav.Link href="/">Home</Nav.Link>
-                        
+                        <Nav.Link href="/properties/my-applied-properties">My Applications</Nav.Link>
                         {
                             isAuthorized ? <Nav.Link href="/logout">Logout</Nav.Link> : 
                             <NavDropdown title="Signin/Signup" id="basic-nav-dropdown">
