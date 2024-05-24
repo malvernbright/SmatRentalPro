@@ -7,16 +7,21 @@ use App\Http\Requests\UpdatePropertyRequest;
 use App\Models\Property;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Validator;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 class PropertyController extends Controller
 {
+
+    // public function __construct()
+    // {
+    //     $this->middleware('auth:api')->except('index');
+    // }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
         $properties = Property::all();
-        // return view('properties.index', compact('properties'));
         return $properties;
     }
 
@@ -69,11 +74,11 @@ class PropertyController extends Controller
             if(!$file->isValid()) {
                 return response()->json(['invalid_file_upload'], 400);
             }
-            $path = public_path() . '/uploads/images/store/';
-            $file->move($path, $file->getClientOriginalName());
-
-
-            $property->property_image = $file->getClientOriginalName();
+            // $file = $request->file('property_image')->storeOnCloudinary('properties');
+            $uploadedFileUrl = Cloudinary::upload($request->file('property_image')->getRealPath())->getSecurePath();
+            // $url = $file->getSecurePath();
+            // $public_id = $uploadedFileUrl->getPublicId();
+            $property->property_image = $uploadedFileUrl;
             $property->owner_id = auth()->user()->id;
             $property->save();
             // return redirect()->route('properties.index');
@@ -103,7 +108,7 @@ class PropertyController extends Controller
      */
     public function edit(Request $request, $id)
     {
-        
+
 
         try {
 

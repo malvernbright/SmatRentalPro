@@ -10,6 +10,7 @@ class Property extends Model
 {
     use HasFactory;
 
+    protected $fillable = ['title', 'description', 'price', 'property_image', 'tenure', 'size', 'owner_id'];
     public function user() : BelongsTo {
         return $this->belongsTo(User::class);
     }

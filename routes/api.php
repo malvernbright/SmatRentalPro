@@ -1,5 +1,9 @@
 <?php
 
+// header('Access-Control-Allow-Origin: http://127.0.0.1:3000');
+// header('Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, DELETE');
+// header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization, X-CSRF-Token");
+
 use App\Http\Controllers\ApplicantController;
 use App\Http\Controllers\Auth\ApiAuthController;
 use App\Http\Controllers\Auth\RegisteredUserController;

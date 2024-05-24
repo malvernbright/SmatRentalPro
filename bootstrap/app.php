@@ -25,7 +25,8 @@ return Application::configure(basePath: dirname(__DIR__))
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
         ]);
         $middleware->api(append: [
-            \Illuminate\Http\Middleware\HandleCors::class,
+            // \Illuminate\Http\Middleware\HandleCors::class,
+            \App\Http\Middleware\CorsMiddleware::class,
         ]);
 
         $middleware->alias([
