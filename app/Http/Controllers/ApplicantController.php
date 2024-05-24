@@ -6,6 +6,8 @@ use App\Models\Applicant;
 use App\Models\Property;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+// use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 
 class ApplicantController extends Controller
 {
@@ -17,6 +19,16 @@ class ApplicantController extends Controller
         $applicants = Applicant::all();
         return $applicants;
     }
+
+    /**
+     * Display a list of applications made by user
+     */
+
+     public function my_applications(Request $request)
+     {
+        $applications = Applicant::get();
+        return $applications->whereIn('email', $request->email);
+     }
 
     /**
      * Show the form for creating a new resource.
@@ -72,7 +84,7 @@ class ApplicantController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show(User $user, $id)
     {
         return Applicant::findOrFail($id);
     }

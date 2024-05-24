@@ -59,6 +59,7 @@ Route::group(
         Route::group(['prefix' => 'applicants'], function () {
             Route::post('/', [ApplicantController::class, 'store']);
             Route::get('/', [ApplicantController::class, 'index']);
+            Route::get('/my-applications', [ApplicantController::class, 'my_applications']);
             Route::get('/{applicant}', [ApplicantController::class,'show']);
             Route::patch('/{applicant}', [PropertyController::class, 'update'])->middleware('role:user');
             Route::delete('/{applicant}', [PropertyController::class, 'destroy'])->middleware('role:admin');
