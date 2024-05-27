@@ -76,10 +76,10 @@ class PropertyController extends Controller
                 return response()->json(['invalid_file_upload'], 400);
             }
             // $file = $request->file('property_image')->storeOnCloudinary('properties');
-            // $uploadedFileUrl = Cloudinary::upload($request->file('property_image')->getRealPath())->getSecurePath();
+            $uploadedFileUrl = Cloudinary::upload($request->file('property_image')->getRealPath())->getSecurePath();
 
 
-            $uploadedFileUrl = $request->file('property_image')->store('property_images', 'public');
+            // $uploadedFileUrl = $request->file('property_image')->store('property_images', 'public');
             // $filename = $file->store('public/properties');
             // $property->property_image = $filename;
 
