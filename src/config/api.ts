@@ -10,6 +10,14 @@ api.interceptors.request.use(config => {
     if (token) {
         config.headers.Authorization = `Bearer ${token}`
     }
+    // if(config.data instanceof FormData){
+    //     config.headers.Authorization = `Bearer ${token}`
+    //     config.headers.setContentType("multipart/form-data");
+    //     // config.headers = {
+    //     //     ...config.headers,
+    //     //     "Content-Type": "multipart/form-data"
+    //     // }
+    // }
     return config
 },
     (error) => {

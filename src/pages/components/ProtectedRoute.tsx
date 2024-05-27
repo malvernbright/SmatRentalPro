@@ -33,6 +33,7 @@ export const ProtectedRoute = ({ children }) => {
         const token = localStorage.getItem(ACCESS_TOKEN)
         if (token) {
             const decoded = jwtDecode(token)
+            // const roles = decoded.roles;
             const tokenEpiration:any = decoded.exp;
             const currentTime = Date.now() / 1000;
             if (tokenEpiration < currentTime) {

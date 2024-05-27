@@ -2,8 +2,10 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useNavigate } from "react-router-dom";
-import api from "../../../config/api"
-import { ACCESS_TOKEN, REFRESH_TOKEN } from "../../../config/constants";
+
+import { ACCESS_LEVEL, ACCESS_TOKEN, REFRESH_TOKEN } from "../../config/constants";
+import api from "../../config/api";
+
 
 export const LoginSchema = () => {
     const navigate = useNavigate();
@@ -21,9 +23,12 @@ export const LoginSchema = () => {
         // setLoading(true);
         try {
             const response = await api.post("/api/auth/login", { email, password });
-            if (response.status == 200) {
+            if (response.status === 200) {
                 localStorage.setItem(ACCESS_TOKEN, response.data.access_token)
-                console.log(response.data)
+                response.data.roles.map(role => {
+                    sessionStorage.setItem(ACCESS_LEVEL, role.name)
+                    // setRoles(role.name)
+                })
                 if (localStorage.getItem(ACCESS_TOKEN)) {
                     navigate('/');
                 }
@@ -32,13 +37,14 @@ export const LoginSchema = () => {
                     localStorage.setItem(REFRESH_TOKEN, response.data.refresh);
                     navigate('/');
                 }
-            }else{
-                console.log(response.data);
             }
 
         } catch (error) {
-            // console.log(error.message, error.status);
-            alert(error);
+            if (error.message === "Request failed with status code 401") {
+                alert('You are not verified. Please verify first')
+            } else {
+                alert(error.message)
+            }
         } finally {
             // setLoading(false);
             // setLoading(false);

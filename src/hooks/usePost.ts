@@ -8,7 +8,6 @@ export const usePost = (props: Props) => {
         queryFn: async () => {
             try {
                 const response = await api.post(props.endpoint, props.payload)
-                console.log(response.data)
                 return response.data;
             } catch (error) {
                 console.error(error)

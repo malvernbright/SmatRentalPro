@@ -11,9 +11,9 @@ export const useFetch = (props: Props) => {
                 const response = await api.get(props.endpoint, props.payload)
                 console.log(response.data)
                 return response.data;
-            } catch (err) {
+            } catch (error) {
                 console.error(error)
-                throw err;
+                throw error;
             }
         }
     })

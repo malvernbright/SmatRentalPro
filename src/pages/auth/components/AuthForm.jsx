@@ -1,14 +1,15 @@
 import { Button, Container, Form } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { RegisterSchema } from "../schemas/RegisterSchema";
-import { LoginSchema } from "../schemas/LoginSchema";
+import { RegisterSchema } from "../../schemas/RegisterSchema";
+import { LoginSchema } from "../../schemas/LoginSchema";
 import "./Form.css"
+import LoadingIndicator from "../../components/LoadingIndicator";
 
 
 export default function AuthForm({ method }) {
     const name = method === "login" ? "Login" : "Register";
-    const { register: userRegister, handleSubmit: registerSubmit, onSubmit: onRegisterSubmit, errors: registerErrors } = RegisterSchema();
-    const { login, handleSubmit: loginSubmit, onSubmit: onLoginSubmit, errors: loginErrors } = LoginSchema();
+    const { loading, register: userRegister, handleSubmit: registerSubmit, onSubmit: onRegisterSubmit, errors: registerErrors } = RegisterSchema();
+    const { login, handleSubmit: loginSubmit, onSubmit: onLoginSubmit, errors: loginErrors, } = LoginSchema();
     return (
         <Container className="my-5 py-5">
             {
@@ -24,7 +25,7 @@ export default function AuthForm({ method }) {
                         <p className="error">{registerErrors.password?.message}</p>
                         <Form.Control type="password" placeholder="Confirm password..." {...userRegister("confirmPassword")} />
                         <p className="error">{registerErrors.confirmPassword?.message}</p>
-                        <Button type="submit">{name}</Button>
+                        {loading ? <LoadingIndicator/> : <Button type="submit" style={{width:"inherit"}}>{name}</Button>}
                         <p className="text-muted my-100">Already have an account? <Link to="/login">Login</Link></p>
                     </Form>
                 </Container>
@@ -38,7 +39,7 @@ export default function AuthForm({ method }) {
                         <p className="error">{loginErrors.email?.message}</p>
                         <Form.Control type="password" placeholder="Password..." {...login("password")} />
                         <p className="error">{loginErrors.password?.message}</p>
-                        <Button type="submit">{name}</Button>
+                        {loading ? <LoadingIndicator/> : <Button type="submit" variant="outline-primary primary my-2" style={{width:"inherit"}}>{name}</Button>}
                         <p className="text-muted">Don&apos;t have an account? <Link to="/register">Register</Link></p>
                     </Form>
                 </Container>

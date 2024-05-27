@@ -1,10 +1,12 @@
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import api from "../../../config/api";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import api from "../../config/api";
 
 export const RegisterSchema = () => {
+    const [loading, setLoading] = useState(false)
     const navigate = useNavigate();
     const schema = yup.object().shape({
         name: yup.string().required("This field is required!"),
@@ -17,30 +19,27 @@ export const RegisterSchema = () => {
         resolver: yupResolver(schema)
     });
 
-    const onSubmit = async () => {
+    const onSubmit = async ({ name, email, password }) => {
         // event.preventDefault();
-        // setLoading(true);
+        setLoading(true);
         try {
-            await api.post("/api/auth/register/", { register })
+            await api.post("/api/auth/register/", { name, email, password })
                 .then((res) => {
                     if (res.status === 201) {
-                        alert("Registration successful, please login");
-                        navigate('/login');
+                        alert("Registration successful, please check your email");
+                        navigate('/registration-success');
                     }
                 })
 
         } catch (error) {
-            console.log(error);
             alert(error);
+            setLoading(false)
         } finally {
-            // setLoading(false);
-            // setLoading(false);
-            // setUsername('');
-            // setPassword('');
+            setLoading(false);
             // return;
         }
     }
-    return { register, handleSubmit, onSubmit, errors }
+    return { register, handleSubmit, onSubmit, errors, loading }
 }
 
 
