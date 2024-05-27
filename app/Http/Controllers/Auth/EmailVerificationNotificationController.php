@@ -14,12 +14,17 @@ class EmailVerificationNotificationController extends Controller
      */
     public function store(Request $request): JsonResponse|RedirectResponse
     {
-        if ($request->user()->hasVerifiedEmail()) {
-            return redirect()->intended('/dashboard');
+        try {
+            if ($request->user()->hasVerifiedEmail()) {
+                return response()->json(['message'=>'Your email is verified']);
+            }
+
+            $request->user()->sendEmailVerificationNotification();
+
+            return response()->json(['status' => 'verification-link-sent']);
+        } catch (\Throwable $th) {
+            //throw $th;
+            return response()->json(['message'=>'Your authentication cannot be verified. Invalid token'], 401);
         }
-
-        $request->user()->sendEmailVerificationNotification();
-
-        return response()->json(['status' => 'verification-link-sent']);
     }
 }

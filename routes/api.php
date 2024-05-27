@@ -7,6 +7,9 @@
 use App\Http\Controllers\ApplicantController;
 use App\Http\Controllers\Auth\ApiAuthController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\Auth\PasswordResetLinkController;
+use App\Http\Controllers\Auth\EmailVerificationNotificationController;
+use App\Http\Controllers\Auth\NewPasswordController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
@@ -18,26 +21,30 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 
 // Auth routes
 Route::group([
-    'middleware' => 'api',
     'prefix' => 'auth'
 ], function ($router) {
-    Route::post('login', [ApiAuthController::class, 'login']);
-    Route::post('logout', [ApiAuthController::class, 'logout']);
-    Route::post('refresh', [ApiAuthController::class, 'refresh']);
-    Route::post('me', [ApiAuthController::class, 'me']);
-});
-
-Route::group(['prefix' => 'auth'], function ($router) {
     Route::post('register', [RegisteredUserController::class, 'register']);
+    Route::group(['middleware' => ['api'],], function(){
+        Route::post('forgot-password', [PasswordResetLinkController::class, 'store']);
+        Route::patch('new-password', [NewPasswordController::class, 'store']);
+        Route::post('verify-email', [EmailVerificationNotificationController::class, 'store']);
+
+        Route::post('login', [ApiAuthController::class, 'login']);
+        Route::post('logout', [ApiAuthController::class, 'logout']);
+        Route::post('refresh', [ApiAuthController::class, 'refresh']);
+        Route::post('me', [ApiAuthController::class, 'me']);
+    });
+
 });
 
 
-Route::get('/admin', function () {
-    return view('admin.index');
-})->middleware(['auth', 'verified', 'role:admin'])->name('admin.index');
+
+// Route::get('/admin', function () {
+//     return view('admin.index');
+// })->middleware(['auth', 'verified', 'role:admin'])->name('admin.index');
 
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth:api', 'verified'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -60,12 +67,11 @@ Route::group(
             Route::post('/', [ApplicantController::class, 'store']);
             Route::get('/', [ApplicantController::class, 'index']);
             Route::get('/my-applications', [ApplicantController::class, 'my_applications']);
+            // Route::get('/my-applications-by-name', [ApplicantController::class, 'myPropertiesByName']);
             Route::get('/{applicant}', [ApplicantController::class,'show']);
             Route::patch('/{applicant}', [PropertyController::class, 'update'])->middleware('role:user');
             Route::delete('/{applicant}', [PropertyController::class, 'destroy'])->middleware('role:admin');
         });
     }
 );
-/**
- * ApplicantController
- */
+

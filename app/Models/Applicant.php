@@ -4,14 +4,16 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Models\Property;
+// use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Applicant extends Model
 {
     use HasFactory;
 
-    public function property(): BelongsTo
+    public function properties(): BelongsToMany
     {
-        return $this->belongsTo(Property::class);
+        return $this->belongsToMany(Property::class);
     }
 }

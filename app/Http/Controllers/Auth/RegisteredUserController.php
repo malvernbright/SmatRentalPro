@@ -44,7 +44,7 @@ class RegisteredUserController extends Controller
     {
         try {
             //Validated
-            $validateUser = Validator::make($request->all(), 
+            $validateUser = Validator::make($request->all(),
             [
                 'name' => 'required',
                 'email' => 'required|email|unique:users,email',
@@ -69,7 +69,7 @@ class RegisteredUserController extends Controller
                 'status' => true,
                 'message' => 'User Created Successfully',
                 'token' => $user->createToken("API TOKEN")->plainTextToken
-            ], 200);
+            ], 201);
 
         } catch (\Throwable $th) {
             return response()->json([

@@ -6,7 +6,7 @@ use App\Models\Applicant;
 use App\Models\Property;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-// use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 
 class ApplicantController extends Controller
@@ -24,11 +24,17 @@ class ApplicantController extends Controller
      * Display a list of applications made by user
      */
 
-     public function my_applications(Request $request)
+     public function my_applications()
      {
-        $applications = Applicant::get();
-        return $applications->whereIn('email', $request->email);
+        $properties = Property::whereHas('applicants', function ($query){
+            $query->where('user_id', auth()->id());
+        })->get();
+        return response()->json($properties, 200);
+        // $applicant = Applicant::whereIn('user_id', auth()->user()->id)->first();
+        // $properties = $applicant->properties;
+        // return response()->json([$properties], 200);
      }
+
 
     /**
      * Show the form for creating a new resource.
@@ -64,10 +70,13 @@ class ApplicantController extends Controller
             $applicant = new Applicant;
             $applicant->name = auth()->user()->name;
             $applicant->email = auth()->user()->email;
+            $applicant->user_id=auth()->user()->id;
             $applicant->phone = $request->input('phone');
             $applicant->message = $request->input('message');
-            $applicant->property_id = $request->input('property_id');
+            $applicant->property = $request->input('property');
             $applicant->save();
+            // Attach properties
+            $applicant->properties()->attach($request->input('property_id'));
             return response()->json([
                 'status' => true,
                 'message' => 'Application Made Successfully',

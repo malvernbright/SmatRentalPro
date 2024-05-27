@@ -46,7 +46,8 @@ class PropertyController extends Controller
                     'title' => 'required',
                     'description' => 'required',
                     'size' => 'required',
-                    'property_image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+                    'property_image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:4096',
+                    // 'property_image' => 'required',
                     'price' => 'required',
                     'tenure' => 'required',
                 ]
@@ -75,9 +76,14 @@ class PropertyController extends Controller
                 return response()->json(['invalid_file_upload'], 400);
             }
             // $file = $request->file('property_image')->storeOnCloudinary('properties');
-            $uploadedFileUrl = Cloudinary::upload($request->file('property_image')->getRealPath())->getSecurePath();
-            // $url = $file->getSecurePath();
-            // $public_id = $uploadedFileUrl->getPublicId();
+            // $uploadedFileUrl = Cloudinary::upload($request->file('property_image')->getRealPath())->getSecurePath();
+
+
+            $uploadedFileUrl = $request->file('property_image')->store('property_images', 'public');
+            // $filename = $file->store('public/properties');
+            // $property->property_image = $filename;
+
+
             $property->property_image = $uploadedFileUrl;
             $property->owner_id = auth()->user()->id;
             $property->save();
@@ -90,7 +96,8 @@ class PropertyController extends Controller
         } catch (\Throwable $th) {
             return response()->json([
                 'status' => false,
-                'message' => $th->getMessage()
+                'message' => $th->getMessage(),
+                'message2' => 'Nothing came through!'
             ], 500);
         }
     }
