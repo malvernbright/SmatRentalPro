@@ -38,7 +38,8 @@ RUN mkdir -p /home/$user/.composer && \
     chown -R $user:$user /home/$user
 
 # Set working directory
-WORKDIR /var/www
+# WORKDIR /var/www
+WORKDIR /app
 
 USER $user
 
@@ -48,5 +49,12 @@ USER $user
 # RUN su - $user -c "php artisan jwt:secret"
 
 # Expose port 9000 and start php-fpm server
-EXPOSE 9000
-CMD ["php-fpm"]
+# EXPOSE 9000
+# CMD ["php-fpm"]
+
+COPY ./run.sh /app/run.sh
+
+# RUN chown $user:$user /app/run.sh
+# RUN chmod +x /app/run.sh
+
+ENTRYPOINT ["/app/run.sh"]
