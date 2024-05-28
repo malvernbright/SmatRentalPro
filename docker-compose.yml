@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  react-app:
+    build: .
+    ports:
+      - "3000:3000"
+    depends_on:
+      - node
+    environment:
+      - NODE_ENV=development
+
+  node:
+    image: node:20
