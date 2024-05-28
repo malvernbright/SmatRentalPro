@@ -1,5 +1,8 @@
 FROM php:8.2-fpm
 
+COPY . /var/www
+
+WORKDIR /var/www
 # Arguments defined in docker-compose.yml
 ARG user
 ARG uid
@@ -37,24 +40,32 @@ RUN useradd -G www-data,root -u $uid -d /home/$user $user
 RUN mkdir -p /home/$user/.composer && \
     chown -R $user:$user /home/$user
 
+RUN chmod 644 /var/www/.env
+RUN chown -R www-data:www-data /var/www/storage
+RUN chmod -R 755 /var/www
+
 # Set working directory
 # WORKDIR /var/www
-WORKDIR /app
+# WORKDIR /app
 
 USER $user
+
+# RUN mv .env .env
 
 # Run Artisan commands as $user
 # RUN su - $user -c "php artisan key:generate"
 # RUN su - $user -c "php artisan migrate"
 # RUN su - $user -c "php artisan jwt:secret"
 
+RUN php /var/www artisan key:generate
+RUN php /var/www artisan migrate --seed
+RUN php /var/www artisan jwt:secret
+RUN php /var/www artisan route:clear
+RUN php /var/www artisan config:clear
+RUN php /var/www artisan cache:clear
+RUN php /var/www artisan storage:link
+
 # Expose port 9000 and start php-fpm server
-# EXPOSE 9000
-# CMD ["php-fpm"]
+EXPOSE 9000
+CMD ["php-fpm"]
 
-COPY ./run.sh /app/run.sh
-
-# RUN chown $user:$user /app/run.sh
-# RUN chmod +x /app/run.sh
-
-ENTRYPOINT ["/app/run.sh"]
