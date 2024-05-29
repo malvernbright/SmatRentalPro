@@ -34,3 +34,10 @@ CLOUDINARY_API_KEY=685528468382649
 CLOUDINARY_API_SECRET=Hr0QBqq4q55H95iJQX1a0S43bvM
 CLOUDINARY_SECURE_URL=true
 ```
+
+#Run the following commands
+```
+php artisan key:generate
+php artisan migrate:refresh --seed
+php artisan jwt:secret
+php artisan serve
